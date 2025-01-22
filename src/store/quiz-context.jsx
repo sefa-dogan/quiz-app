@@ -1,12 +1,12 @@
 import { createContext } from "react";
 
 export const QuestionContext = createContext({
-  currentQuestion: {
+  questions: [{
     id: 0,
     isActive: true,
     question: "",
-    answers: [{ id: 0, cevap: "" }],
+    options: [{ id: 0, option: "" }],
     correntAnswerId: 0,
     isAnswerCorrect: undefined,
-  },
+  }],
 });

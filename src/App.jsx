@@ -1,24 +1,25 @@
 import { QuestionContext } from "./store/quiz-context.jsx";
-import { useContext, useReducer,useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { questions } from "./store/questions.js";
 
 import Header from "./components/Header.jsx";
+import Quiz from "./components/Quiz.jsx"
 
 var _questions = questions;
 
 
 function App() {
-  
-  function produceRandomId() {
-    let randomId =Math.floor(Math.random() * 10 + 1) 
-    if(_questions[randomId].isAnswerCorrect === undefined)
+
+  function getRandomId(state) {
+    let randomId = Math.floor(Math.random() * 10)
+    if (state[randomId].isAnswerCorrect === undefined)
       return randomId
-    else produceRandomId();
-        
+    else getRandomId(state);
+
   }
   function handleDispatchQuestionsReduce(state, action) {
-        
-    const randomId = produceRandomId();
+    let updatedQuestions;
+    const randomId = getRandomId(state);
     if (action.type === "START") {
       const currentQuestion = { ...state[randomId] };
       currentQuestion.isActive = true;
@@ -31,9 +32,9 @@ function App() {
         }),
         currentQuestion,
       ];
-      return {
+      return [
         ...updatedQuestions,
-      };
+      ];
     } else if (action.type === "NEXT") {
       if (state[randomId].isAnswerCorrect !== undefined) {
         const currentQuestion = { ...state[randomId] };
@@ -47,10 +48,12 @@ function App() {
           }),
           currentQuestion,
         ];
-        return {
+        return [
           ...updatedQuestions,
-        };
-      }else
+        ];
+      } else {
+        return state;
+      }
     }
   }
 
@@ -58,25 +61,29 @@ function App() {
     handleDispatchQuestionsReduce,
     questions
   );
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     dispatchQuestionsReduce({
-      type:"START"
+      type: "START"
     })
-  },[])
+  }, [])
 
   function handleOnNextQuestion() {
     dispatchQuestionsReduce({
-      type:"NEXT"
+      type: "NEXT"
     })
   }
+  function handleIsAnswerCorrectOrNot(questionId, answerId) {
 
+  }
   const questionCtx = {
-    question: questionReduce,
+    questions: questionsReduce,
+    handleOnNextQuestion: handleOnNextQuestion
   };
   return (
     <QuestionContext.Provider value={questionCtx}>
       <Header />
+      <Quiz />
     </QuestionContext.Provider>
   );
 }
