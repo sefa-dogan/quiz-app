@@ -9,7 +9,7 @@ export const questions = [
       { id: 3, option: "CSS" },
       { id: 4, option: "Photoshop" },
     ],
-    correntAnswerId: 2,
+    correctAnswerId: 2,
     isAnswerCorrect: undefined,
   },
   {
@@ -22,7 +22,7 @@ export const questions = [
       { id: 3, option: "HighText Machine Learning" },
       { id: 4, option: "HyperTool Marking Logic" },
     ],
-    correntAnswerId: 2,
+    correctAnswerId: 2,
     isAnswerCorrect: undefined,
   },
   {
@@ -35,7 +35,7 @@ export const questions = [
       { id: 3, option: "MySQL" },
       { id: 4, option: "PostgreSQL" },
     ],
-    correntAnswerId: 2,
+    correctAnswerId: 2,
     isAnswerCorrect: undefined,
   },
   {
@@ -48,7 +48,7 @@ export const questions = [
       { id: 3, option: "Veritabanı yönetmek" },
       { id: 4, option: "Metin düzenlemek" },
     ],
-    correntAnswerId: 1,
+    correctAnswerId: 1,
     isAnswerCorrect: undefined,
   },
   {
@@ -61,7 +61,7 @@ export const questions = [
       { id: 3, option: "print" },
       { id: 4, option: "color" },
     ],
-    correntAnswerId: 4,
+    correctAnswerId: 4,
     isAnswerCorrect: undefined,
   },
   {
@@ -74,7 +74,7 @@ export const questions = [
       { id: 3, option: "Agile" },
       { id: 4, option: "JIRA" },
     ],
-    correntAnswerId: 3,
+    correctAnswerId: 3,
     isAnswerCorrect: undefined,
   },
   {
@@ -88,7 +88,7 @@ export const questions = [
       { id: 3, option: "insert()" },
       { id: 4, option: "push()" },
     ],
-    correntAnswerId: 2,
+    correctAnswerId: 2,
     isAnswerCorrect: undefined,
   },
   {
@@ -101,7 +101,7 @@ export const questions = [
       { id: 3, option: "GET" },
       { id: 4, option: "LOAD" },
     ],
-    correntAnswerId: 3,
+    correctAnswerId: 3,
     isAnswerCorrect: undefined,
   },
   {
@@ -114,7 +114,7 @@ export const questions = [
       { id: 3, option: "Apache" },
       { id: 4, option: "Java" },
     ],
-    correntAnswerId: 1,
+    correctAnswerId: 1,
     isAnswerCorrect: undefined,
   },
   {
@@ -128,7 +128,7 @@ export const questions = [
       { id: 3, option: "class" },
       { id: 4, option: "create" },
     ],
-    correntAnswerId: 3,
+    correctAnswerId: 3,
     isAnswerCorrect: undefined,
   },
 ];

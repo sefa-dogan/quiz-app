@@ -3,26 +3,29 @@ import { useReducer, useEffect } from "react";
 import { questions } from "./store/questions.js";
 
 import Header from "./components/Header.jsx";
-import Quiz from "./components/Quiz.jsx"
+import Quiz from "./components/Quiz.jsx";
 
 var _questions = questions;
 
-
 function App() {
-
   function getRandomId(state) {
-    let randomId = Math.floor(Math.random() * 10)
-    if (state[randomId].isAnswerCorrect === undefined)
-      return randomId
-    else getRandomId(state);
-
+    let randomId = Math.floor(Math.random() * 10);
+    let question = getQuestion(state, randomId);
+    console.log(question);
+    if (question.isAnswerCorrect === undefined) {
+      console.log(randomId);
+      return randomId;
+    } else return getRandomId(state);
   }
   function handleDispatchQuestionsReduce(state, action) {
+    const { type, userAnswer } = action;
     let updatedQuestions;
-    const randomId = getRandomId(state);
-    if (action.type === "START") {
-      const currentQuestion = { ...state[randomId] };
-      currentQuestion.isActive = true;
+    if (type === "START") {
+      const randomId = getRandomId(state);
+      const firstQuestion = {
+        ...getQuestion(state, randomId),
+      };
+      firstQuestion.isActive = true;
       updatedQuestions = [
         ...state.filter((q) => {
           if (q.id !== randomId) {
@@ -30,30 +33,40 @@ function App() {
             return q;
           }
         }),
-        currentQuestion,
+        firstQuestion,
       ];
-      return [
-        ...updatedQuestions,
+      return updatedQuestions;
+    } else if (type === "NEXT") {
+      const prevQuestion = {
+        // ...state.find((q) => q.id === userAnswer.questionId),
+        ...getQuestion(state, userAnswer.questionId),
+      };
+      prevQuestion.isAnswerCorrect =
+        prevQuestion.correctAnswerId === userAnswer.answerId;
+      updatedQuestions = [
+        ...state.filter((q) => q.id !== userAnswer.questionId),
+        prevQuestion,
       ];
-    } else if (action.type === "NEXT") {
-      if (state[randomId].isAnswerCorrect !== undefined) {
-        const currentQuestion = { ...state[randomId] };
-        currentQuestion.isActive = true;
-        updatedQuestions = [
-          ...state.filter((q) => {
-            if (q.id !== randomId) {
-              q.isActive = false;
-              return q;
-            }
-          }),
-          currentQuestion,
-        ];
-        return [
-          ...updatedQuestions,
-        ];
-      } else {
-        return state;
-      }
+      const randomId = getRandomId(updatedQuestions);
+      console.log("gelen random id", randomId);
+      // if (state[randomId].isAnswerCorrect !== undefined) {
+      const nextQuestion = {
+        ...getQuestion(updatedQuestions, randomId),
+      };
+      nextQuestion.isActive = true;
+      updatedQuestions = [
+        ...updatedQuestions.filter((q) => {
+          if (q.id !== randomId) {
+            q.isActive = false;
+            return q;
+          }
+        }),
+        nextQuestion,
+      ];
+      return updatedQuestions;
+      // } else {
+      //   return state;
+      // }
     }
   }
 
@@ -62,23 +75,27 @@ function App() {
     questions
   );
 
+  function getQuestion(questions, id) {
+    return questions.find((q) => q.id === id);
+  }
   useEffect(() => {
     dispatchQuestionsReduce({
-      type: "START"
-    })
-  }, [])
+      type: "START",
+    });
+  }, []);
 
-  function handleOnNextQuestion() {
+  function handleOnNextQuestion(questionId, answerId) {
     dispatchQuestionsReduce({
-      type: "NEXT"
-    })
-  }
-  function handleIsAnswerCorrectOrNot(questionId, answerId) {
-
+      type: "NEXT",
+      userAnswer: {
+        questionId,
+        answerId,
+      },
+    });
   }
   const questionCtx = {
     questions: questionsReduce,
-    handleOnNextQuestion: handleOnNextQuestion
+    handleOnNextQuestion: handleOnNextQuestion,
   };
   return (
     <QuestionContext.Provider value={questionCtx}>
