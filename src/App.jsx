@@ -1,22 +1,25 @@
 import { QuestionContext } from "./store/quiz-context.jsx";
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useRef } from "react";
 import { questions } from "./store/questions.js";
 
 import Header from "./components/Header.jsx";
 import Quiz from "./components/Quiz.jsx";
+import Score from "./components/Score.jsx";
 
 var _questions = questions;
 
 function App() {
+  const isDone = useRef(false);
   function getRandomId(state) {
-    let randomId = Math.floor(Math.random() * 10);
-    let question = getQuestion(state, randomId);
-    console.log(question);
-    if (question.isAnswerCorrect === undefined) {
-      console.log(randomId);
-      return randomId;
-    } else return getRandomId(state);
+    if (handleDoneQuiz(state)) {
+      let randomId = Math.floor(Math.random() * 10);
+      let question = getQuestion(state, randomId);
+      if (question.isAnswerCorrect === undefined) {
+        return randomId;
+      } else return getRandomId(state);
+    }
   }
+
   function handleDispatchQuestionsReduce(state, action) {
     const { type, userAnswer } = action;
     let updatedQuestions;
@@ -38,7 +41,6 @@ function App() {
       return updatedQuestions;
     } else if (type === "NEXT") {
       const prevQuestion = {
-        // ...state.find((q) => q.id === userAnswer.questionId),
         ...getQuestion(state, userAnswer.questionId),
       };
       prevQuestion.isAnswerCorrect =
@@ -48,25 +50,25 @@ function App() {
         prevQuestion,
       ];
       const randomId = getRandomId(updatedQuestions);
-      console.log("gelen random id", randomId);
-      // if (state[randomId].isAnswerCorrect !== undefined) {
-      const nextQuestion = {
-        ...getQuestion(updatedQuestions, randomId),
-      };
-      nextQuestion.isActive = true;
-      updatedQuestions = [
-        ...updatedQuestions.filter((q) => {
-          if (q.id !== randomId) {
-            q.isActive = false;
-            return q;
-          }
-        }),
-        nextQuestion,
-      ];
+      if (randomId) {
+        isDone.current = false;
+        console.log(randomId);
+        const nextQuestion = {
+          ...getQuestion(updatedQuestions, randomId),
+        };
+        nextQuestion.isActive = true;
+        updatedQuestions = [
+          ...updatedQuestions.filter((q) => {
+            if (q.id !== randomId) {
+              q.isActive = false;
+              return q;
+            }
+          }),
+          nextQuestion,
+        ];
+      } else isDone.current = true;
+
       return updatedQuestions;
-      // } else {
-      //   return state;
-      // }
     }
   }
 
@@ -93,14 +95,18 @@ function App() {
       },
     });
   }
+  function handleDoneQuiz(questions) {
+    return questions.find((q) => q.isAnswerCorrect === undefined);
+  }
   const questionCtx = {
     questions: questionsReduce,
     handleOnNextQuestion: handleOnNextQuestion,
+    isDone: isDone.current,
   };
   return (
     <QuestionContext.Provider value={questionCtx}>
       <Header />
-      <Quiz />
+      {!questionCtx.isDone ? <Quiz /> : <Score />}
     </QuestionContext.Provider>
   );
 }
